@@ -11,6 +11,7 @@ Options:
     --credentials-file=FILE     Path to credentials file.
 """
 
+import re
 import json
 import twitter
 from docopt import docopt
@@ -61,9 +62,12 @@ if __name__ == '__main__':
     #statuses = json.dumps(results["statuses"], indent = 4, sort_keys = True)
 
     for status in results["statuses"]:
-        id         = status["id"]
-        created_at = status["created_at"]
-        text       = status["text"]
-        symbols    = status["entities"]["symbols"]
+        symbols    = [item["text"] for item in status["entities"]["symbols"]]
+        for symbol in symbols:
+            source     = re.sub("[^a-zA-Z]+", "", client.search_term).upper()
+            target     = symbol
+            id         = status["id"]
+            text       = status["text"]
+            created_at = status["created_at"]
 
-        print(f"id: {id} \t created_at: {created_at} \t text: {text} \t symbols: {symbols}")
+            print(f"id: {id} \t created_at: {created_at} \t source: {source} \t target: {target}")
