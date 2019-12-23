@@ -66,8 +66,8 @@ if __name__ == '__main__':
         for symbol in symbols:
             source     = re.sub("[^a-zA-Z]+", "", client.search_term).upper()
             target     = symbol
-            id         = status["id"]
+            tweet_id   = status["id"]
             text       = status["text"]
             created_at = status["created_at"]
 
-            print(f"id: {id} \t created_at: {created_at} \t source: {source} \t target: {target}")
+            print(f"id: {tweet_id} \t created_at: {created_at} \t source: {source} \t target: {target}")
