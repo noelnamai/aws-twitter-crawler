@@ -14,9 +14,11 @@ Options:
 import json
 import twitter
 from docopt import docopt
+from datetime import date
 
 class Crawler(object):
     #class attributes
+    date = ""
     search_term = ""
     credentials = None
 
@@ -25,17 +27,18 @@ class Crawler(object):
         credentials = args['--credentials-file']
         with open(credentials, "r") as obj:
             data = obj.read()
+        self.date = str(date.today())
         self.credentials = json.loads(data)
         self.search_term = args['--search-term']
 
     def log_into_twitter(self):
         #loginto the twitter API and return the api object
+        credentials = self.credentials
         api = twitter.Api(
-                consumer_key=self.credentials["api_key"],
-                consumer_secret=self.credentials["api_secret_key"],
-                access_token_key=self.credentials["access_token_key"],
-                access_token_secret=self.credentials["access_token_secret"],
-                sleep_on_rate_limit=True
+                consumer_key=credentials["api_key"],
+                consumer_secret=credentials["api_secret_key"],
+                access_token_key=credentials["access_token_key"],
+                access_token_secret=credentials["access_token_secret"]
                 )
         return api
 
@@ -50,8 +53,8 @@ if __name__ == '__main__':
                 lang = "en",
                 count = 10,
                 return_json = True,
-                since = "2014-07-19",
                 result_type = "recent",
+                since = client.date,
                 term = client.search_term
                 )
 
@@ -61,5 +64,6 @@ if __name__ == '__main__':
         id = status["id"]
         created_at = status["created_at"]
         text = status["text"]
+        symbols = status["entities"]["symbols"]
 
-        print(f"id: {id} \t created_at: {created_at} \t text: {text}")
+        print(f"id: {id} \t created_at: {created_at} \t text: {text} \t symbols: {symbols}")
