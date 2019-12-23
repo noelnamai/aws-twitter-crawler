@@ -49,7 +49,7 @@ if __name__ == '__main__':
     api = client.log_into_twitter()
 
     #print(twitter.ratelimit.RateLimit())
-
+    print(client.date)
     results = api.GetSearch(
                 lang        = "en",
                 count       = 10,
