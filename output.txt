@@ -1,0 +1,22 @@
+tweet_id,created_at,source,target,text
+1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,GOOG,SPY,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
+1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,GOOG,GSPC,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
+1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,GOOG,AAPL,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
+1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,GOOG,NFLX,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
+1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,GOOG,GOOG,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
+1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,GOOG,TSLA,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
+1212100212333907969,Tue Dec 31 19:56:25 +0000 2019,GOOG,GOOG,"$GOOG #patent 10,522,154 Voice signature for user authentication to electronic device #tech #IP #research… https://t.co/hQYAT8cAE9"
+1212097246482837511,Tue Dec 31 19:44:37 +0000 2019,GOOG,SPY,$spy $gspc $aapl $nflx $goog $tsla Saks parent Hudson's Bay Co. shares surge 20% on reports of higher bid to go pri… https://t.co/nnMNhiwtHi
+1212097246482837511,Tue Dec 31 19:44:37 +0000 2019,GOOG,GSPC,$spy $gspc $aapl $nflx $goog $tsla Saks parent Hudson's Bay Co. shares surge 20% on reports of higher bid to go pri… https://t.co/nnMNhiwtHi
+1212097246482837511,Tue Dec 31 19:44:37 +0000 2019,GOOG,AAPL,$spy $gspc $aapl $nflx $goog $tsla Saks parent Hudson's Bay Co. shares surge 20% on reports of higher bid to go pri… https://t.co/nnMNhiwtHi
+1212097246482837511,Tue Dec 31 19:44:37 +0000 2019,GOOG,NFLX,$spy $gspc $aapl $nflx $goog $tsla Saks parent Hudson's Bay Co. shares surge 20% on reports of higher bid to go pri… https://t.co/nnMNhiwtHi
+1212097246482837511,Tue Dec 31 19:44:37 +0000 2019,GOOG,GOOG,$spy $gspc $aapl $nflx $goog $tsla Saks parent Hudson's Bay Co. shares surge 20% on reports of higher bid to go pri… https://t.co/nnMNhiwtHi
+1212097246482837511,Tue Dec 31 19:44:37 +0000 2019,GOOG,TSLA,$spy $gspc $aapl $nflx $goog $tsla Saks parent Hudson's Bay Co. shares surge 20% on reports of higher bid to go pri… https://t.co/nnMNhiwtHi
+1212096435929452547,Tue Dec 31 19:41:24 +0000 2019,GOOG,GOOG,"$GOOG #patent 10,522,137 Multi-user authentication on a device #tech #IP #research https://t.co/K6eho10Bid https://t.co/zXO5zo753K"
+1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,AAPL,SPY,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
+1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,AAPL,GSPC,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
+1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,AAPL,AAPL,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
+1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,AAPL,NFLX,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
+1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,AAPL,GOOG,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
+1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,AAPL,TSLA,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
+1212100079433265152,Tue Dec 31 19:55:53 +0000 2019,AAPL,AAPL,"$AAPL #patent 10,520,979 Enhanced application preview mode #tech #IP #research https://t.co/jAqFjp4f2f https://t.co/QhKKcVOhPS"
