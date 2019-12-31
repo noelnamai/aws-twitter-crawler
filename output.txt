@@ -20,3 +20,32 @@ tweet_id,created_at,source,target,text
 1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,AAPL,GOOG,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
 1212100543897833472,Tue Dec 31 19:57:44 +0000 2019,AAPL,TSLA,"$spy $gspc $aapl $nflx $goog $tsla Oil ends lower in final session of 2019, but logs biggest annual rise in 3 years  https://t.co/jaN4OkjfRx"
 1212100079433265152,Tue Dec 31 19:55:53 +0000 2019,AAPL,AAPL,"$AAPL #patent 10,520,979 Enhanced application preview mode #tech #IP #research https://t.co/jAqFjp4f2f https://t.co/QhKKcVOhPS"
+1212105396971868160,Tue Dec 31 20:17:01 +0000 2019,TWTR,TWTR,$TWTR Trumps Bid to Curb Iran Falters After Embassy Attack in Baghdad via https://t.co/dU2ohMsCEH
+1212106026381725698,Tue Dec 31 20:19:31 +0000 2019,NFLX,ROKU,$roku $fb $nflx $googl $aapl $amzn $spy $pypl $mcd $ulta $shop $atvi happy New Years!! Let’s kill it in 2020!!
+1212106026381725698,Tue Dec 31 20:19:31 +0000 2019,NFLX,FB,$roku $fb $nflx $googl $aapl $amzn $spy $pypl $mcd $ulta $shop $atvi happy New Years!! Let’s kill it in 2020!!
+1212106026381725698,Tue Dec 31 20:19:31 +0000 2019,NFLX,NFLX,$roku $fb $nflx $googl $aapl $amzn $spy $pypl $mcd $ulta $shop $atvi happy New Years!! Let’s kill it in 2020!!
+1212106026381725698,Tue Dec 31 20:19:31 +0000 2019,NFLX,GOOGL,$roku $fb $nflx $googl $aapl $amzn $spy $pypl $mcd $ulta $shop $atvi happy New Years!! Let’s kill it in 2020!!
+1212106026381725698,Tue Dec 31 20:19:31 +0000 2019,NFLX,AAPL,$roku $fb $nflx $googl $aapl $amzn $spy $pypl $mcd $ulta $shop $atvi happy New Years!! Let’s kill it in 2020!!
+1212106026381725698,Tue Dec 31 20:19:31 +0000 2019,NFLX,AMZN,$roku $fb $nflx $googl $aapl $amzn $spy $pypl $mcd $ulta $shop $atvi happy New Years!! Let’s kill it in 2020!!
+1212106026381725698,Tue Dec 31 20:19:31 +0000 2019,NFLX,SPY,$roku $fb $nflx $googl $aapl $amzn $spy $pypl $mcd $ulta $shop $atvi happy New Years!! Let’s kill it in 2020!!
+1212106026381725698,Tue Dec 31 20:19:31 +0000 2019,NFLX,PYPL,$roku $fb $nflx $googl $aapl $amzn $spy $pypl $mcd $ulta $shop $atvi happy New Years!! Let’s kill it in 2020!!
+1212106026381725698,Tue Dec 31 20:19:31 +0000 2019,NFLX,MCD,$roku $fb $nflx $googl $aapl $amzn $spy $pypl $mcd $ulta $shop $atvi happy New Years!! Let’s kill it in 2020!!
+1212106026381725698,Tue Dec 31 20:19:31 +0000 2019,NFLX,ULTA,$roku $fb $nflx $googl $aapl $amzn $spy $pypl $mcd $ulta $shop $atvi happy New Years!! Let’s kill it in 2020!!
+1212106026381725698,Tue Dec 31 20:19:31 +0000 2019,NFLX,SHOP,$roku $fb $nflx $googl $aapl $amzn $spy $pypl $mcd $ulta $shop $atvi happy New Years!! Let’s kill it in 2020!!
+1212106026381725698,Tue Dec 31 20:19:31 +0000 2019,NFLX,ATVI,$roku $fb $nflx $googl $aapl $amzn $spy $pypl $mcd $ulta $shop $atvi happy New Years!! Let’s kill it in 2020!!
+1212104718878748684,Tue Dec 31 20:14:19 +0000 2019,NFLX,SPY,"$spy $gspc $aapl $nflx $goog $tsla Dow, Exxon Mobil and IBM top the 'Dogs of the Dow' list as 2019 ends  https://t.co/OJdT2y9FH2"
+1212104718878748684,Tue Dec 31 20:14:19 +0000 2019,NFLX,GSPC,"$spy $gspc $aapl $nflx $goog $tsla Dow, Exxon Mobil and IBM top the 'Dogs of the Dow' list as 2019 ends  https://t.co/OJdT2y9FH2"
+1212104718878748684,Tue Dec 31 20:14:19 +0000 2019,NFLX,AAPL,"$spy $gspc $aapl $nflx $goog $tsla Dow, Exxon Mobil and IBM top the 'Dogs of the Dow' list as 2019 ends  https://t.co/OJdT2y9FH2"
+1212104718878748684,Tue Dec 31 20:14:19 +0000 2019,NFLX,NFLX,"$spy $gspc $aapl $nflx $goog $tsla Dow, Exxon Mobil and IBM top the 'Dogs of the Dow' list as 2019 ends  https://t.co/OJdT2y9FH2"
+1212104718878748684,Tue Dec 31 20:14:19 +0000 2019,NFLX,GOOG,"$spy $gspc $aapl $nflx $goog $tsla Dow, Exxon Mobil and IBM top the 'Dogs of the Dow' list as 2019 ends  https://t.co/OJdT2y9FH2"
+1212104718878748684,Tue Dec 31 20:14:19 +0000 2019,NFLX,TSLA,"$spy $gspc $aapl $nflx $goog $tsla Dow, Exxon Mobil and IBM top the 'Dogs of the Dow' list as 2019 ends  https://t.co/OJdT2y9FH2"
+1212103462303027201,Tue Dec 31 20:09:19 +0000 2019,NFLX,NFLX,@themotleyfool Selling $NFLX at $81 (before the 7:1 split) which taught me to hold or add to companies you believe in
+1212102918834311169,Tue Dec 31 20:07:10 +0000 2019,NFLX,NFLX,"$NFLX enters an Uptrend as Momentum Indicator exceeded the 0 level on December 17, 2019. View odds for this and oth… https://t.co/vItVN3zuGN"
+1212102802513842176,Tue Dec 31 20:06:42 +0000 2019,NFLX,NFLX,@TVGrimReaper Are you referring to the same data that led $NFLX to conclude creating The I-Land was a great idea? O… https://t.co/gwT4sFDVtS
+1212102799724601344,Tue Dec 31 20:06:41 +0000 2019,NFLX,AAPL,$AAPL patience being rewarded $FB $AMZN $NFLX not so much $GOOGL trying $NVDA waiting $AAPL https://t.co/hfyDvAvZXb
+1212102799724601344,Tue Dec 31 20:06:41 +0000 2019,NFLX,FB,$AAPL patience being rewarded $FB $AMZN $NFLX not so much $GOOGL trying $NVDA waiting $AAPL https://t.co/hfyDvAvZXb
+1212102799724601344,Tue Dec 31 20:06:41 +0000 2019,NFLX,AMZN,$AAPL patience being rewarded $FB $AMZN $NFLX not so much $GOOGL trying $NVDA waiting $AAPL https://t.co/hfyDvAvZXb
+1212102799724601344,Tue Dec 31 20:06:41 +0000 2019,NFLX,NFLX,$AAPL patience being rewarded $FB $AMZN $NFLX not so much $GOOGL trying $NVDA waiting $AAPL https://t.co/hfyDvAvZXb
+1212102799724601344,Tue Dec 31 20:06:41 +0000 2019,NFLX,GOOGL,$AAPL patience being rewarded $FB $AMZN $NFLX not so much $GOOGL trying $NVDA waiting $AAPL https://t.co/hfyDvAvZXb
+1212102799724601344,Tue Dec 31 20:06:41 +0000 2019,NFLX,NVDA,$AAPL patience being rewarded $FB $AMZN $NFLX not so much $GOOGL trying $NVDA waiting $AAPL https://t.co/hfyDvAvZXb
+1212102799724601344,Tue Dec 31 20:06:41 +0000 2019,NFLX,AAPL,$AAPL patience being rewarded $FB $AMZN $NFLX not so much $GOOGL trying $NVDA waiting $AAPL https://t.co/hfyDvAvZXb

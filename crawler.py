@@ -18,6 +18,7 @@ import csv
 import json
 import twitter
 import pandas as pd
+
 from os import path
 from docopt import docopt
 from datetime import date
@@ -74,7 +75,6 @@ class Crawler(object):
                 })
         f.close()
 
-
 if __name__ == "__main__":
 
     args = docopt(__doc__, version='Twitter Crawler Version:1.0')
@@ -89,7 +89,7 @@ if __name__ == "__main__":
                 result_type = "recent",
                 since = client.date,
                 term = client.search_term
-                )
+            )
 
     #statuses = json.dumps(results["statuses"][0], indent = 4, sort_keys = True)
     for status in results["statuses"]:
