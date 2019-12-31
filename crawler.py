@@ -18,26 +18,25 @@ import csv
 import json
 import twitter
 import pandas as pd
-
 from os import path
+from tweet import Tweet
 from docopt import docopt
 from datetime import date
 
 class Crawler(object):
-
     #class attributes
-    date = ""
-    search_term = ""
+    date = None
+    search_term = None
     credentials = None
 
     def __init__(self, args):
         #read credentials file
-        credentials = args['--credentials-file']
+        credentials = args["--credentials-file"]
         with open(credentials, "r") as obj:
             data = obj.read()
         self.date = str(date.today())
         self.credentials = json.loads(data)
-        self.search_term = args['--search-term']
+        self.search_term = args["--search-term"]
 
     def log_into_twitter(self):
         #loginto the twitter API and return the api object
@@ -50,8 +49,8 @@ class Crawler(object):
                 )
         return api
 
-    def save_tweets(self, status):
-        #save processed tweets
+    def save_tweet(self, tweet):
+        #save processed tweet
         outfile = "output.txt"
         if path.exists(outfile):
             f = open(outfile, "a+", encoding = "utf-8")
@@ -61,36 +60,33 @@ class Crawler(object):
             writer = csv.DictWriter(f, fieldnames = ["tweet_id", "created_at", "source", "target", "text"])
             writer.writeheader()
 
-        if "retweeted_status" in status:
+        if tweet.retweeted_status:
             pass
         else:
-            symbols = [item["text"] for item in status["entities"]["symbols"]]
-            for symbol in symbols:
+            for symbol in tweet.symbols:
                 writer.writerow({
-                    "tweet_id": status["id"],
-                    "created_at": status["created_at"],
+                    "tweet_id": tweet.tweet_id,
+                    "created_at": tweet.created_at,
                     "source": re.sub("[^a-zA-Z]+", "", self.search_term).upper(),
                     "target": symbol.upper(),
-                    "text": status["text"]
+                    "text": tweet.text
                 })
         f.close()
 
 if __name__ == "__main__":
-
     args = docopt(__doc__, version='Twitter Crawler Version:1.0')
     client = Crawler(args)
     api = client.log_into_twitter()
-
     #print(twitter.ratelimit.RateLimit())
     results = api.GetSearch(
                 lang = "en",
-                count = 10,
+                count = 100,
                 return_json = True,
                 result_type = "recent",
                 since = client.date,
                 term = client.search_term
-            )
-
+                )
     #statuses = json.dumps(results["statuses"][0], indent = 4, sort_keys = True)
     for status in results["statuses"]:
-        client.save_tweets(status)
+        tweet = Tweet(status)
+        client.save_tweet(tweet)
