@@ -51,13 +51,36 @@ class Crawler(object):
 
     def save_tweet(self, tweet):
         #save processed tweet
-        outfile = "output.txt"
+        outfile = "tweets.out"
+        fieldnames = ["tweet_id", "created_at", "text"]
         if path.exists(outfile):
             f = open(outfile, "a+", encoding = "utf-8")
-            writer = csv.DictWriter(f, fieldnames = ["tweet_id", "created_at", "source", "target", "text"])
+            writer = csv.DictWriter(f, fieldnames = fieldnames)
         else:
             f = open(outfile, "w+", encoding = "utf-8")
-            writer = csv.DictWriter(f, fieldnames = ["tweet_id", "created_at", "source", "target", "text"])
+            writer = csv.DictWriter(f, fieldnames = fieldnames)
+            writer.writeheader()
+
+        if tweet.retweeted_status:
+            pass
+        else:
+            writer.writerow({
+                "tweet_id": tweet.tweet_id,
+                "created_at": tweet.created_at,
+                "text": tweet.text
+            })
+        f.close()
+
+    def save_to_graph(self, tweet):
+        #save processed tweet
+        outfile = "graph.out"
+        fieldnames = ["tweet_id", "created_at", "source", "target"]
+        if path.exists(outfile):
+            f = open(outfile, "a+", encoding = "utf-8")
+            writer = csv.DictWriter(f, fieldnames = fieldnames)
+        else:
+            f = open(outfile, "w+", encoding = "utf-8")
+            writer = csv.DictWriter(f, fieldnames = fieldnames)
             writer.writeheader()
 
         if tweet.retweeted_status:
@@ -68,8 +91,7 @@ class Crawler(object):
                     "tweet_id": tweet.tweet_id,
                     "created_at": tweet.created_at,
                     "source": re.sub("[^a-zA-Z]+", "", self.search_term).upper(),
-                    "target": symbol.upper(),
-                    "text": tweet.text
+                    "target": symbol.upper()
                 })
         f.close()
 
@@ -90,3 +112,4 @@ if __name__ == "__main__":
     for status in results["statuses"]:
         tweet = Tweet(status)
         client.save_tweet(tweet)
+        client.save_to_graph(tweet)
