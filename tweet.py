@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import re
-import csv
 
 from os import path
+from datetime import datetime
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
@@ -18,45 +18,34 @@ class Tweet(object):
 
     def __init__(self, status):
         self.tweet_id = status["id"]
-        self.created_at = status["created_at"]
+        self.created_at = datetime.strptime(status["created_at"], "%a %b %d %H:%M:%S %z %Y")
         self.text = status["text"].replace("\r", "").replace("\n", "")
         self.symbols = [item["text"].upper() for item in status["entities"]["symbols"]]
         if "retweeted_status" in status:
             self.retweeted_status = status["retweeted_status"]
 
-    def save_tweet(self):
+    def save_tweet(self, mydb):
         #save processed tweet
-        outfile = "tweets.csv"
-        fieldnames = ["tweet_id", "created_at", "text", "symbols"]
-        if path.exists(outfile):
-            csvfile = open(outfile, "a+", newline = "\n", encoding = "utf-8")
-            writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
-        else:
-            csvfile = open(outfile, "w+", newline = "\n", encoding = "utf-8")
-            writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
-            writer.writeheader()
+        cursor = mydb.cursor()
+        cursor.execute("CREATE DATABASE IF NOT EXISTS twitter")
+        cursor.execute("USE twitter")
+        cursor.execute("CREATE TABLE IF NOT EXISTS tweets (id INT AUTO_INCREMENT PRIMARY KEY, tweet_id VARCHAR(255), created_at DATE, tweet_text VARCHAR(255), symbols VARCHAR(255))")
+
         if self.retweeted_status:
             pass
         else:
-            writer.writerow({
-                "tweet_id": self.tweet_id, 
-                "created_at": self.created_at, 
-                "text": self.text,
-                "symbols": ",".join(self.symbols)
-            })
-        csvfile.close()
+            sql = "INSERT INTO tweets (tweet_id, created_at, tweet_text, symbols) VALUES (%s, %s, %s, %s)"
+            values = (self.tweet_id, self.created_at, self.text, ",".join(self.symbols))
+            cursor.execute(sql, values)
+            mydb.commit()
 
-    def save_to_graph(self, tweet, search_term):
+    def save_to_graph(self, tweet, search_term, mydb):
         #save processed tweet
-        outfile = "graph.csv"
-        fieldnames = ["tweet_id", "created_at", "source", "target"]
-        if path.exists(outfile):
-            csvfile = open(outfile, "a+", newline = "\n", encoding = "utf-8")
-            writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
-        else:
-            csvfile = open(outfile, "w+", newline = "\n", encoding = "utf-8")
-            writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
-            writer.writeheader()
+        cursor = mydb.cursor()
+        cursor.execute("CREATE DATABASE IF NOT EXISTS twitter")
+        cursor.execute("USE twitter")
+        cursor.execute("CREATE TABLE IF NOT EXISTS graph (id INT AUTO_INCREMENT PRIMARY KEY, tweet_id VARCHAR(255), created_at DATE, source VARCHAR(255), target VARCHAR(255))")
+
         if tweet.retweeted_status:
             pass
         else:
@@ -64,10 +53,7 @@ class Tweet(object):
                 source = re.sub("[^a-zA-Z]+", "", search_term).upper()
                 target = symbol.upper()
                 if source != target:
-                    writer.writerow({
-                        "tweet_id": tweet.tweet_id, 
-                        "created_at": tweet.created_at, 
-                        "source": source, 
-                        "target": target
-                    })
-        csvfile.close()
+                    sql = "INSERT INTO graph (tweet_id, created_at, source, target) VALUES (%s, %s, %s, %s)"
+                    values = (self.tweet_id, self.created_at, source, target)
+                    cursor.execute(sql, values)
+                    mydb.commit()

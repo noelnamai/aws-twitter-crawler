@@ -17,6 +17,7 @@ import json
 import logging
 import twitter
 import pandas as pd
+import mysql.connector
 
 from tweet import Tweet
 from docopt import docopt
@@ -54,10 +55,20 @@ class Crawler(object):
                 )
         return api
 
+    def connect_db(self):
+        #connect to db
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            passwd = "password"
+        )
+        return mydb
+
 if __name__ == "__main__":
     args = docopt(__doc__, version='Twitter Crawler Version:1.0')
     client = Crawler(args)
     api = client.log_into_twitter()
+    mydb = client.connect_db()
     #print(twitter.ratelimit.RateLimit())
     results = api.GetSearch(
                 lang = "en",
@@ -72,5 +83,5 @@ if __name__ == "__main__":
         if len(status["entities"]["symbols"]) > 0:
             tweet = Tweet(status)
             logging.info(f"crawler processing {tweet.tweet_id} created at: {tweet.created_at}")
-            tweet.save_tweet()
-            tweet.save_to_graph(tweet = tweet, search_term = client.search_term)
+            tweet.save_tweet(mydb)
+            tweet.save_to_graph(tweet, client.search_term, mydb)
