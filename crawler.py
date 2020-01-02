@@ -53,47 +53,49 @@ class Crawler(object):
         #save processed tweet
         outfile = "tweets.out"
         fieldnames = ["tweet_id", "created_at", "text"]
+
         if path.exists(outfile):
-            f = open(outfile, "a+", encoding = "utf-8")
-            writer = csv.DictWriter(f, fieldnames = fieldnames)
+            csvfile = open(outfile, "a+", encoding = "utf-8")
+            writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
         else:
-            f = open(outfile, "w+", encoding = "utf-8")
-            writer = csv.DictWriter(f, fieldnames = fieldnames)
+            csvfile = open(outfile, "w+", encoding = "utf-8")
+            writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
             writer.writeheader()
 
         if tweet.retweeted_status:
             pass
         else:
             writer.writerow({
-                "tweet_id": tweet.tweet_id,
-                "created_at": tweet.created_at,
-                "text": tweet.text
+                "tweet_id": tweet.tweet_id, "created_at": tweet.created_at, "text": tweet.text
             })
-        f.close()
+
+        csvfile.close()
 
     def save_to_graph(self, tweet):
         #save processed tweet
         outfile = "graph.out"
         fieldnames = ["tweet_id", "created_at", "source", "target"]
+
         if path.exists(outfile):
-            f = open(outfile, "a+", encoding = "utf-8")
-            writer = csv.DictWriter(f, fieldnames = fieldnames)
+            csvfile = open(outfile, "a+", encoding = "utf-8")
+            writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
         else:
-            f = open(outfile, "w+", encoding = "utf-8")
-            writer = csv.DictWriter(f, fieldnames = fieldnames)
+            csvfile = open(outfile, "w+", encoding = "utf-8")
+            writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
             writer.writeheader()
 
         if tweet.retweeted_status:
             pass
         else:
             for symbol in tweet.symbols:
-                writer.writerow({
-                    "tweet_id": tweet.tweet_id,
-                    "created_at": tweet.created_at,
-                    "source": re.sub("[^a-zA-Z]+", "", self.search_term).upper(),
-                    "target": symbol.upper()
-                })
-        f.close()
+                source = re.sub("[^a-zA-Z]+", "", self.search_term).upper()
+                target = symbol.upper()
+                if source != target:
+                    writer.writerow({
+                        "tweet_id": tweet.tweet_id, "created_at": tweet.created_at, "source": source, "target": target
+                    })
+
+        csvfile.close()
 
 if __name__ == "__main__":
     args = docopt(__doc__, version='Twitter Crawler Version:1.0')
@@ -102,7 +104,7 @@ if __name__ == "__main__":
     #print(twitter.ratelimit.RateLimit())
     results = api.GetSearch(
                 lang = "en",
-                count = 100,
+                count = 10,
                 return_json = True,
                 result_type = "recent",
                 since = client.date,
