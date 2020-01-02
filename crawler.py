@@ -13,12 +13,11 @@ Options:
     --credentials-file=FILE     Path to credentials file.
 """
 
-import re
-import csv
 import json
+import logging
 import twitter
 import pandas as pd
-from os import path
+
 from tweet import Tweet
 from docopt import docopt
 from datetime import date
@@ -38,6 +37,12 @@ class Crawler(object):
         self.credentials = json.loads(data)
         self.search_term = args["--search-term"]
 
+        logging.basicConfig(
+            level = logging.INFO,
+            datefmt = "%m/%d/%Y %H:%M:%S", 
+            format = "%(asctime)s %(levelname)s: %(message)s"
+            )
+
     def log_into_twitter(self):
         #loginto the twitter API and return the api object
         credentials = self.credentials
@@ -49,54 +54,6 @@ class Crawler(object):
                 )
         return api
 
-    def save_tweet(self, tweet):
-        #save processed tweet
-        outfile = "tweets.out"
-        fieldnames = ["tweet_id", "created_at", "text"]
-
-        if path.exists(outfile):
-            csvfile = open(outfile, "a+", encoding = "utf-8")
-            writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
-        else:
-            csvfile = open(outfile, "w+", encoding = "utf-8")
-            writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
-            writer.writeheader()
-
-        if tweet.retweeted_status:
-            pass
-        else:
-            writer.writerow({
-                "tweet_id": tweet.tweet_id, "created_at": tweet.created_at, "text": tweet.text
-            })
-
-        csvfile.close()
-
-    def save_to_graph(self, tweet):
-        #save processed tweet
-        outfile = "graph.out"
-        fieldnames = ["tweet_id", "created_at", "source", "target"]
-
-        if path.exists(outfile):
-            csvfile = open(outfile, "a+", encoding = "utf-8")
-            writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
-        else:
-            csvfile = open(outfile, "w+", encoding = "utf-8")
-            writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
-            writer.writeheader()
-
-        if tweet.retweeted_status:
-            pass
-        else:
-            for symbol in tweet.symbols:
-                source = re.sub("[^a-zA-Z]+", "", self.search_term).upper()
-                target = symbol.upper()
-                if source != target:
-                    writer.writerow({
-                        "tweet_id": tweet.tweet_id, "created_at": tweet.created_at, "source": source, "target": target
-                    })
-
-        csvfile.close()
-
 if __name__ == "__main__":
     args = docopt(__doc__, version='Twitter Crawler Version:1.0')
     client = Crawler(args)
@@ -104,7 +61,7 @@ if __name__ == "__main__":
     #print(twitter.ratelimit.RateLimit())
     results = api.GetSearch(
                 lang = "en",
-                count = 10,
+                count = 100,
                 return_json = True,
                 result_type = "recent",
                 since = client.date,
@@ -113,5 +70,6 @@ if __name__ == "__main__":
     #statuses = json.dumps(results["statuses"][0], indent = 4, sort_keys = True)
     for status in results["statuses"]:
         tweet = Tweet(status)
-        client.save_tweet(tweet)
-        client.save_to_graph(tweet)
+        logging.info(f"crawler processing {tweet.tweet_id} created at: {tweet.created_at}")
+        tweet.save_tweet()
+        tweet.save_to_graph(tweet = tweet, search_term = client.search_term)
