@@ -29,10 +29,10 @@ class Tweet(object):
         outfile = "tweets.csv"
         fieldnames = ["tweet_id", "created_at", "text", "symbols"]
         if path.exists(outfile):
-            csvfile = open(outfile, "a+", encoding = "utf-8")
+            csvfile = open(outfile, "a+", newline = "\n", encoding = "utf-8")
             writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
         else:
-            csvfile = open(outfile, "w+", encoding = "utf-8")
+            csvfile = open(outfile, "w+", newline = "\n", encoding = "utf-8")
             writer = csv.DictWriter(f = csvfile, fieldnames = fieldnames)
             writer.writeheader()
         if self.retweeted_status:

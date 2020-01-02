@@ -69,7 +69,8 @@ if __name__ == "__main__":
                 )
     #statuses = json.dumps(results["statuses"][0], indent = 4, sort_keys = True)
     for status in results["statuses"]:
-        tweet = Tweet(status)
-        logging.info(f"crawler processing {tweet.tweet_id} created at: {tweet.created_at}")
-        tweet.save_tweet()
-        tweet.save_to_graph(tweet = tweet, search_term = client.search_term)
+        if len(status["entities"]["symbols"]) > 0:
+            tweet = Tweet(status)
+            logging.info(f"crawler processing {tweet.tweet_id} created at: {tweet.created_at}")
+            tweet.save_tweet()
+            tweet.save_to_graph(tweet = tweet, search_term = client.search_term)
