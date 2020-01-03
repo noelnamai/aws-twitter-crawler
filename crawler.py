@@ -17,7 +17,7 @@ import json
 import logging
 import twitter
 import pandas as pd
-import mysql.connector
+import mysql.connector as mysql
 
 from tweet import Tweet
 from docopt import docopt
@@ -40,7 +40,7 @@ class Crawler(object):
 
         logging.basicConfig(
             level = logging.INFO,
-            datefmt = "%m/%d/%Y %H:%M:%S", 
+            datefmt = "%Y-%m-%d %H:%M:%S",
             format = "%(asctime)s %(levelname)s: %(message)s"
             )
 
@@ -57,11 +57,17 @@ class Crawler(object):
 
     def connect_db(self):
         #connect to db
-        mydb = mysql.connector.connect(
-            host = "localhost",
-            user = "root",
-            passwd = "password"
-        )
+        try:
+            mydb = mysql.connect(
+                host = "localhost",
+                user = "root",
+                passwd = "password",
+                autocommit = True,
+                pool_size = 10,
+                buffered = True
+                )
+        except mysql.Error as error:
+            logging.info(error)
         return mydb
 
 if __name__ == "__main__":
@@ -69,6 +75,7 @@ if __name__ == "__main__":
     client = Crawler(args)
     api = client.log_into_twitter()
     mydb = client.connect_db()
+    logging.info(f"Connected to MySQL database!")
     #print(twitter.ratelimit.RateLimit())
     results = api.GetSearch(
                 lang = "en",
@@ -82,6 +89,7 @@ if __name__ == "__main__":
     for status in results["statuses"]:
         if len(status["entities"]["symbols"]) > 0:
             tweet = Tweet(status)
-            logging.info(f"crawler processing {tweet.tweet_id} created at: {tweet.created_at}")
+            logging.info(f"Crawler processing {tweet.tweet_id} created at: {tweet.created_at}")
             tweet.save_tweet(mydb)
             tweet.save_to_graph(tweet, client.search_term, mydb)
+    mydb.close()

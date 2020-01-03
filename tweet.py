@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import re
+import logging
+import mysql.connector as mysql
 
 from os import path
 from datetime import datetime
@@ -16,6 +18,12 @@ class Tweet(object):
     retweeted_status = None
     symbols = list()
 
+    logging.basicConfig(
+        level = logging.INFO,
+        datefmt = "%Y-%m-%d %H:%M:%S",
+        format = "%(asctime)s %(levelname)s: %(message)s"
+        )
+
     def __init__(self, status):
         self.tweet_id = status["id"]
         self.created_at = datetime.strptime(status["created_at"], "%a %b %d %H:%M:%S %z %Y")
@@ -29,22 +37,27 @@ class Tweet(object):
         cursor = mydb.cursor()
         cursor.execute("CREATE DATABASE IF NOT EXISTS twitter")
         cursor.execute("USE twitter")
-        cursor.execute("CREATE TABLE IF NOT EXISTS tweets (id INT AUTO_INCREMENT PRIMARY KEY, tweet_id VARCHAR(255), created_at DATE, tweet_text VARCHAR(255), symbols VARCHAR(255))")
+        cursor.execute("CREATE TABLE IF NOT EXISTS tweets (tweet_id VARCHAR(255) PRIMARY KEY, created_at DATE, text VARCHAR(255), symbols VARCHAR(255))")
 
         if self.retweeted_status:
             pass
         else:
-            sql = "INSERT INTO tweets (tweet_id, created_at, tweet_text, symbols) VALUES (%s, %s, %s, %s)"
-            values = (self.tweet_id, self.created_at, self.text, ",".join(self.symbols))
-            cursor.execute(sql, values)
-            mydb.commit()
+            try:
+                sql = "INSERT INTO tweets (tweet_id, created_at, text, symbols) VALUES (%s, %s, %s, %s)"
+                values = (self.tweet_id, self.created_at, self.text, ",".join(self.symbols))
+                cursor.execute(sql, values)
+            except mysql.Error as error:
+                if error.errno == mysql.errorcode.ER_DUP_ENTRY:
+                    logging.info(error)
+                else:
+                    raise
 
     def save_to_graph(self, tweet, search_term, mydb):
         #save processed tweet
         cursor = mydb.cursor()
         cursor.execute("CREATE DATABASE IF NOT EXISTS twitter")
         cursor.execute("USE twitter")
-        cursor.execute("CREATE TABLE IF NOT EXISTS graph (id INT AUTO_INCREMENT PRIMARY KEY, tweet_id VARCHAR(255), created_at DATE, source VARCHAR(255), target VARCHAR(255))")
+        cursor.execute("CREATE TABLE IF NOT EXISTS graph (id INT AUTO_INCREMENT PRIMARY KEY, tweet_id VARCHAR(255), created_at DATETIME, source VARCHAR(255), target VARCHAR(255))")
 
         if tweet.retweeted_status:
             pass
@@ -56,4 +69,3 @@ class Tweet(object):
                     sql = "INSERT INTO graph (tweet_id, created_at, source, target) VALUES (%s, %s, %s, %s)"
                     values = (self.tweet_id, self.created_at, source, target)
                     cursor.execute(sql, values)
-                    mydb.commit()
