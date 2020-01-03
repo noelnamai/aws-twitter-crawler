@@ -93,7 +93,7 @@ if __name__ == "__main__":
                 status = json.loads(status)
                 tweet = Tweet(status)
                 if len(tweet.symbols) > 0:
-                    logging.info(f"Crawler processing {tweet.tweet_id} created on {tweet.date} at {tweet.time}")
+                    logging.info(f"Crawler processing tweet {tweet.tweet_id} created on {tweet.date} at {tweet.time}")
                     tweet.save_tweet(mydb)
                     tweet.save_to_graph(tweet, mydb, client.search_term)
             except Exception as error:
