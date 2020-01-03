@@ -25,6 +25,7 @@ import mysql.connector
 from tweet import Tweet
 from docopt import docopt
 from datetime import date
+from mysql.connector import pooling
 
 class Crawler(object):
     #class attributes
@@ -57,7 +58,7 @@ class Crawler(object):
     def connect_db(self):
         #connect to db
         try:
-            self.pool = mysql.connector.connect(
+            self.pool = pooling.MySQLConnectionPool(
                             pool_name = "mypool",
                             pool_size = 10,
                             autocommit = True,
@@ -94,9 +95,8 @@ if __name__ == "__main__":
                 status = json.loads(status)
                 tweet = Tweet(status)
                 if len(tweet.symbols) > 0:
-                    mydb = mysql.connector.connect(pool_name = "mypool")
-                    logging.info(f"Crawler processing tweet: {tweet.tweet_id} created at: {tweet.time}")
-                    print(f"Connection mydb:", mydb.connection_id)
+                    mydb = client.pool.get_connection()
+                    logging.info(f"Crawler processing tweet {tweet.tweet_id} created at {tweet.time}")
                     tweet.save_tweet(mydb)
                     tweet.save_to_graph(tweet, mydb, client.search_term)
                     mydb.close()
@@ -106,5 +106,5 @@ if __name__ == "__main__":
                 traceback.print_exc(file = sys.stdout)
                 break
 
-    #pool.close()
+    client.pool.close()
     logging.info(f"MySQL connection is closed")
