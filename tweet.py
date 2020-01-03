@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import re
+import calendar
 import logging
 import mysql.connector as mysql
 
@@ -12,10 +13,11 @@ from nltk.tokenize import word_tokenize
 class Tweet(object):
 
     #class attributes
+    tweet_id = None
     date = None
     time = None
+    weekday = None
     text = None
-    tweet_id = None
     retweeted_status = None
     symbols = list()
 
@@ -30,6 +32,7 @@ class Tweet(object):
         self.tweet_id = status["id"]
         self.date = created_at.date()
         self.time = created_at.time()
+        self.weekday = calendar.day_name[created_at.weekday()]
         self.text = status["text"].replace("\r", "").replace("\n", "")
         self.symbols = [item["text"].upper() for item in status["entities"]["symbols"]]
         self.retweeted_status = status["retweeted_status"] if "retweeted_status" in status else None
@@ -39,14 +42,14 @@ class Tweet(object):
         cursor = mydb.cursor()
         cursor.execute("CREATE DATABASE IF NOT EXISTS twitter")
         cursor.execute("USE twitter")
-        cursor.execute("CREATE TABLE IF NOT EXISTS tweets (tweet_id VARCHAR(255) PRIMARY KEY, created_date DATE, created_time TIME, text VARCHAR(255), symbols VARCHAR(255))")
+        cursor.execute("CREATE TABLE IF NOT EXISTS tweets (tweet_id VARCHAR(255) PRIMARY KEY, created_date DATE, created_time TIME, weekday VARCHAR(255), text VARCHAR(255), symbols VARCHAR(255))")
 
         if self.retweeted_status:
             pass
         else:
             try:
-                sql = "INSERT INTO tweets (tweet_id, created_date, created_time, text, symbols) VALUES (%s, %s, %s, %s, %s)"
-                values = (self.tweet_id, self.date, self.time, self.text, ",".join(self.symbols))
+                sql = "INSERT INTO tweets (tweet_id, created_date, created_time, weekday, text, symbols) VALUES (%s, %s, %s, %s, %s, %s)"
+                values = (self.tweet_id, self.date, self.time, self.weekday, self.text, ",".join(self.symbols))
                 cursor.execute(sql, values)
             except mysql.Error as error:
                 if error.errno == mysql.errorcode.ER_DUP_ENTRY:
@@ -60,7 +63,7 @@ class Tweet(object):
         cursor = mydb.cursor()
         cursor.execute("CREATE DATABASE IF NOT EXISTS twitter")
         cursor.execute("USE twitter")
-        cursor.execute("CREATE TABLE IF NOT EXISTS graph (id INT AUTO_INCREMENT PRIMARY KEY, tweet_id VARCHAR(255), created_date DATE, created_time TIME, source VARCHAR(255), target VARCHAR(255))")
+        cursor.execute("CREATE TABLE IF NOT EXISTS graph (id INT AUTO_INCREMENT PRIMARY KEY, tweet_id VARCHAR(255), created_date DATE, created_time TIME, weekday VARCHAR(255), source VARCHAR(255), target VARCHAR(255))")
 
         if tweet.retweeted_status:
             pass
@@ -69,7 +72,7 @@ class Tweet(object):
                 source = re.sub("[^a-zA-Z]+", "", search_term).upper()
                 target = symbol.upper()
                 if source != target:
-                    sql = "INSERT INTO graph (tweet_id, created_date, created_time, source, target) VALUES (%s, %s, %s, %s, %s)"
-                    values = (self.tweet_id, self.date, self.time, source, target)
+                    sql = "INSERT INTO graph (tweet_id, created_date, created_time, weekday, source, target) VALUES (%s, %s, %s, %s, %s, %s)"
+                    values = (self.tweet_id, self.date, self.time, self.weekday, source, target)
                     cursor.execute(sql, values)
         cursor.close()
