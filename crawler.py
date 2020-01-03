@@ -29,6 +29,7 @@ from datetime import date
 class Crawler(object):
     #class attributes
     date = None
+    pool = None
     search_term = None
     credentials = None
 
@@ -56,18 +57,18 @@ class Crawler(object):
     def connect_db(self):
         #connect to db
         try:
-            mydb = mysql.connector.connect(
-                        host = credentials.host,
-                        user = credentials.user,
-                        passwd = credentials.passwd,
-                        autocommit = True,
-                        pool_size = 10,
-                        buffered = True
-                        )
+            self.pool = mysql.connector.connect(
+                            pool_name = "mypool",
+                            pool_size = 10,
+                            autocommit = True,
+                            buffered = True,
+                            host = credentials.host,
+                            user = credentials.user,
+                            passwd = credentials.passwd
+                            )
             logging.info(f"Crawler has established a connection to MySQL Database")
         except mysql.connector.Error as error:
             logging.info(error)
-        return mydb
 
     def twitter_stream(self, oauth):
         #get twitter stream with search term(s)
@@ -83,7 +84,7 @@ class Crawler(object):
 if __name__ == "__main__":
     args = docopt(__doc__, version='Twitter Crawler Version:1.0')
     client = Crawler(args)
-    mydb = client.connect_db()
+    client.connect_db()
     oauth = client.connect_twitter()
     response = client.twitter_stream(oauth)
 
@@ -93,12 +94,17 @@ if __name__ == "__main__":
                 status = json.loads(status)
                 tweet = Tweet(status)
                 if len(tweet.symbols) > 0:
-                    logging.info(f"Crawler processing tweet {tweet.tweet_id} created at {tweet.time}")
+                    mydb = mysql.connector.connect(pool_name = "mypool")
+                    logging.info(f"Crawler processing tweet: {tweet.tweet_id} created at: {tweet.time}")
+                    print(f"Connection mydb:", mydb.connection_id)
                     tweet.save_tweet(mydb)
                     tweet.save_to_graph(tweet, mydb, client.search_term)
+                    mydb.close()
+                else:
+                    pass
             except Exception as error:
                 traceback.print_exc(file = sys.stdout)
                 break
 
-    mydb.close()
+    #pool.close()
     logging.info(f"MySQL connection is closed")
