@@ -29,8 +29,7 @@ class Tweet(object):
         self.created_at = datetime.strptime(status["created_at"], "%a %b %d %H:%M:%S %z %Y")
         self.text = status["text"].replace("\r", "").replace("\n", "")
         self.symbols = [item["text"].upper() for item in status["entities"]["symbols"]]
-        if "retweeted_status" in status:
-            self.retweeted_status = status["retweeted_status"]
+        self.retweeted_status = status["retweeted_status"] if "retweeted_status" in status else None
 
     def save_tweet(self, mydb):
         #save processed tweet
@@ -51,8 +50,9 @@ class Tweet(object):
                     logging.info(error)
                 else:
                     raise
+        cursor.close()
 
-    def save_to_graph(self, tweet, search_term, mydb):
+    def save_to_graph(self, tweet, mydb, search_term):
         #save processed tweet
         cursor = mydb.cursor()
         cursor.execute("CREATE DATABASE IF NOT EXISTS twitter")
@@ -69,3 +69,4 @@ class Tweet(object):
                     sql = "INSERT INTO graph (tweet_id, created_at, source, target) VALUES (%s, %s, %s, %s)"
                     values = (self.tweet_id, self.created_at, source, target)
                     cursor.execute(sql, values)
+        cursor.close()
