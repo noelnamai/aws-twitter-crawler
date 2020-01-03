@@ -74,6 +74,7 @@ class Crawler(object):
         response = requests.post(
                         stream = True,
                         auth = oauth,
+                        timeout = 60,
                         url = "https://stream.twitter.com/1.1/statuses/filter.json",
                         data = {"track": self.search_term}
                         )
@@ -86,17 +87,18 @@ if __name__ == "__main__":
     oauth = client.connect_twitter()
     response = client.twitter_stream(oauth)
 
-    for status in response.iter_lines():
-        try:
-            status = json.loads(status)
-            tweet = Tweet(status)
-            if len(tweet.symbols) > 0:
-                logging.info(f"Crawler processing {tweet.tweet_id} created on {tweet.date}")
-                tweet.save_tweet(mydb)
-                tweet.save_to_graph(tweet, mydb, client.search_term)
-        except Exception as error:
-            traceback.print_exc(file = sys.stdout)
-            break
+    for status in response.iter_lines(chunk_size = 10000):
+        if status:
+            try:
+                status = json.loads(status)
+                tweet = Tweet(status)
+                if len(tweet.symbols) > 0:
+                    logging.info(f"Crawler processing {tweet.tweet_id} created on {tweet.date}")
+                    tweet.save_tweet(mydb)
+                    tweet.save_to_graph(tweet, mydb, client.search_term)
+            except Exception as error:
+                traceback.print_exc(file = sys.stdout)
+                break
 
     mydb.close()
     logging.info(f"MySQL connection is closed")
