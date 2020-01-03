@@ -50,7 +50,7 @@ class Crawler(object):
                     resource_owner_key = credentials.access_token_key,
                     resource_owner_secret = credentials.access_token_secret
                     )
-        logging.info(f"Connected to Twitter API")
+        logging.info(f"Crawler has established a connection to Twitter API")
         return oauth
 
     def connect_db(self):
@@ -64,7 +64,7 @@ class Crawler(object):
                         pool_size = 10,
                         buffered = True
                         )
-            logging.info(f"Connected to MySQL Database")
+            logging.info(f"Crawler has established a connection to MySQL Database")
         except mysql.connector.Error as error:
             logging.info(error)
         return mydb
@@ -93,7 +93,7 @@ if __name__ == "__main__":
                 status = json.loads(status)
                 tweet = Tweet(status)
                 if len(tweet.symbols) > 0:
-                    logging.info(f"Crawler processing {tweet.tweet_id} created on {tweet.date}")
+                    logging.info(f"Crawler processing {tweet.tweet_id} created on {tweet.date} at {tweet.time}")
                     tweet.save_tweet(mydb)
                     tweet.save_to_graph(tweet, mydb, client.search_term)
             except Exception as error:
