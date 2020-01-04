@@ -13,11 +13,14 @@ from nltk.tokenize import word_tokenize
 class Tweet(object):
 
     #class attributes
-    tweet_id = None
     date = None
     time = None
-    weekday = None
     text = None
+    weekday = None
+    user_id = None
+    user_name = None
+    tweet_id = None
+    user_location = None
     retweeted_status = None
     symbols = list()
 
@@ -29,9 +32,12 @@ class Tweet(object):
 
     def __init__(self, status):
         created_at = datetime.strptime(status["created_at"], "%a %b %d %H:%M:%S %z %Y")
-        self.tweet_id = status["id"]
         self.date = created_at.date()
         self.time = created_at.time()
+        self.tweet_id = status["id"]
+        self.user_id = status["user"]["id"]
+        self.user_name = status["user"]["name"]
+        self.user_location = status["user"]["location"]
         self.weekday = calendar.day_name[created_at.weekday()]
         self.text = status["text"].replace("\r", "").replace("\n", "")
         self.symbols = [item["text"].upper() for item in status["entities"]["symbols"]]

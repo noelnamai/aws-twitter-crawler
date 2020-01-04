@@ -13,14 +13,14 @@ Options:
 """
 
 import sys
-import traceback
 import json
 import logging
 import twitter
 import requests
+import traceback
 import credentials
-import requests_oauthlib
 import mysql.connector
+import requests_oauthlib
 
 from tweet import Tweet
 from docopt import docopt
@@ -28,6 +28,7 @@ from datetime import date
 from mysql.connector import pooling
 
 class Crawler(object):
+
     #class attributes
     date = None
     pool = None
@@ -52,7 +53,7 @@ class Crawler(object):
                     resource_owner_key = credentials.access_token_key,
                     resource_owner_secret = credentials.access_token_secret
                     )
-        logging.info(f"Crawler has established a connection to Twitter API")
+        logging.info(f"Connection to Twitter API established")
         return oauth
 
     def connect_db(self):
@@ -67,7 +68,7 @@ class Crawler(object):
                             user = credentials.user,
                             passwd = credentials.passwd
                             )
-            logging.info(f"Crawler has established a connection to MySQL Database")
+            logging.info(f"Connection to MySQL Database established")
         except mysql.connector.Error as error:
             logging.info(error)
 
@@ -96,15 +97,16 @@ if __name__ == "__main__":
                 tweet = Tweet(status)
                 if len(tweet.symbols) > 0:
                     mydb = client.pool.get_connection()
-                    logging.info(f"Crawler processing tweet {tweet.tweet_id} created at {tweet.time}")
+                    logging.info(f"Processing Tweet {tweet.tweet_id} created at {tweet.time}")
                     tweet.save_tweet(mydb)
                     tweet.save_to_graph(tweet, mydb, client.search_term)
                     mydb.close()
                 else:
                     pass
             except Exception as error:
+                print(json.dumps(status, indent = 4, sort_keys = True))
                 traceback.print_exc(file = sys.stdout)
-                break
+                #break
 
     client.pool.close()
     logging.info(f"MySQL connection is closed")
