@@ -30,11 +30,9 @@ class Tweet(object):
         self.text = self.clean_tweet(status["text"])
         self.user_location = status["user"]["location"]
         self.weekday = calendar.day_name[created_at.weekday()]
+        self.polarity, self.subjectivity = self.get_tweet_sentiment(self.text)
         self.symbols = [item["text"].upper() for item in status["entities"]["symbols"]]
         self.retweeted_status = status["retweeted_status"] if "retweeted_status" in status else None
-        sentiment = self.get_tweet_sentiment(self.text)
-        self.polarity = sentiment.polarity
-        self.subjectivity = sentiment.subjectivity
 
     def clean_tweet(self, tweet): 
         #clean tweet text by removing links and special characters
@@ -42,8 +40,8 @@ class Tweet(object):
 
     def get_tweet_sentiment(self, tweet): 
         #function to classify sentiment of passed tweet
-        analysis = TextBlob(tweet)
-        return analysis.sentiment
+        blob = TextBlob(tweet)
+        return blob.sentiment.polarity, blob.sentiment.subjectivity
 
     def save_tweet(self, mydb):
         #save processed tweet
