@@ -43,7 +43,7 @@ class Crawler(object):
                         resource_owner_key = credentials.access_token_key,
                         resource_owner_secret = credentials.access_token_secret
                         )
-            logging.info(f"Connection to Twitter API established")
+            logging.info(f"Connected to Twitter API")
         except: 
             logging.info(f"Error: Twitter API authentication failed") 
         return oauth
@@ -52,15 +52,16 @@ class Crawler(object):
         #connect to db
         try:
             self.pool = pooling.MySQLConnectionPool(
-                            pool_name = "mypool",
-                            pool_size = 10,
+                            pool_name = "pool",
+                            pool_size = 30,
                             autocommit = True,
                             buffered = True,
                             host = credentials.host,
                             user = credentials.user,
                             passwd = credentials.passwd
                             )
-            logging.info(f"Connection to MySQL Database established")
+            db = self.pool.get_connection()
+            logging.info(f"Connected to MySQL Server v{db.get_server_info()} at {db.server_host}:{db.server_port}")
         except mysql.connector.Error as error:
             logging.info(error)
 
@@ -85,11 +86,10 @@ if __name__ == "__main__":
     for status in response.iter_lines(chunk_size = 10000):
         if status:
             try:
+                mydb = client.pool.get_connection()
                 status = json.loads(status)
                 tweet = Tweet(status)
                 logging.info(f"{tweet.text}")
-                mydb = client.pool.get_connection()
-                #logging.info(f"Processing Tweet {tweet.tweet_id} created at {tweet.time}")
                 tweet.save_tweet(mydb)
                 tweet.save_to_graph(tweet, mydb, client.search_term)
                 mydb.close()
@@ -97,7 +97,7 @@ if __name__ == "__main__":
                 print(json.dumps(status, indent = 4, sort_keys = True))
                 traceback.print_exc(file = sys.stdout)
                 #break
-        time.sleep(0.1)
+        #time.sleep(0.1)
 
     client.pool.close()
     logging.info(f"MySQL connection is closed")
