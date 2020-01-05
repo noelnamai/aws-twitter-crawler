@@ -61,7 +61,7 @@ class Crawler(object):
                             passwd = credentials.passwd
                             )
             db = self.pool.get_connection()
-            logging.info(f"Connected to MySQL Server v{db.get_server_info()} at {db.server_host}:{db.server_port}")
+            logging.info(f"Connected to MySQL Server {db.get_server_info()} at {db.server_host}:{db.server_port}")
         except mysql.connector.Error as error:
             logging.info(error)
 
