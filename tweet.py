@@ -11,8 +11,8 @@ from nltk.tokenize import word_tokenize
 class Tweet(object):
 
     #class attributes
-    date, time, text, weekday, user_id, user_name, tweet_id, user_location, retweeted_status = None, None, None, None, None, None, None, None, None
     symbols = list()
+    date, time, text, weekday, user_id, user_name, user_location, tweet_id, retweeted_status, language, polarity, subjectivity = None, None, None, None, None, None, None, None, None, None, None, None
 
     logging.basicConfig(
         level = logging.INFO,
@@ -25,6 +25,7 @@ class Tweet(object):
         self.date = created_at.date()
         self.time = created_at.time()
         self.tweet_id = status["id"]
+        self.language = status["lang"]
         self.user_id = status["user"]["id"]
         self.user_name = status["user"]["name"]
         self.text = self.clean_tweet(status["text"])

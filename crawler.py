@@ -86,13 +86,14 @@ if __name__ == "__main__":
     for status in response.iter_lines(chunk_size = 10000):
         if status:
             try:
-                mydb = client.pool.get_connection()
                 status = json.loads(status)
                 tweet = Tweet(status)
-                logging.info(f"{tweet.text}")
-                tweet.save_tweet(mydb)
-                tweet.save_to_graph(tweet, mydb, client.search_term)
-                mydb.close()
+                if tweet.language == "en":
+                    logging.info(f"{tweet.text}")
+                    mydb = client.pool.get_connection()
+                    tweet.save_tweet(mydb)
+                    tweet.save_to_graph(tweet, mydb, client.search_term)
+                    mydb.close()
             except Exception as error:
                 print(json.dumps(status, indent = 4, sort_keys = True))
                 traceback.print_exc(file = sys.stdout)
