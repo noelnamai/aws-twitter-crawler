@@ -12,15 +12,7 @@ Options:
     --search-term=STRING        The term to search Twitter API by.
 """
 
-import sys
-import json
-import logging
-import twitter
-import requests
-import traceback
-import credentials
-import mysql.connector
-import requests_oauthlib
+import sys, json, time, logging, twitter, requests, traceback, credentials, mysql.connector, requests_oauthlib
 
 from tweet import Tweet
 from docopt import docopt
@@ -30,10 +22,7 @@ from mysql.connector import pooling
 class Crawler(object):
 
     #class attributes
-    date = None
-    pool = None
-    search_term = None
-    credentials = None
+    date, pool, search_term, credentials = None, None, None, None
 
     logging.basicConfig(
         level = logging.INFO,
@@ -47,13 +36,16 @@ class Crawler(object):
 
     def connect_twitter(self):
         #loginto the twitter API and return the api object
-        oauth = requests_oauthlib.OAuth1(
-                    client_key = credentials.api_key,
-                    client_secret = credentials.api_secret_key,
-                    resource_owner_key = credentials.access_token_key,
-                    resource_owner_secret = credentials.access_token_secret
-                    )
-        logging.info(f"Connection to Twitter API established")
+        try:
+            oauth = requests_oauthlib.OAuth1(
+                        client_key = credentials.api_key,
+                        client_secret = credentials.api_secret_key,
+                        resource_owner_key = credentials.access_token_key,
+                        resource_owner_secret = credentials.access_token_secret
+                        )
+            logging.info(f"Connection to Twitter API established")
+        except: 
+            logging.info(f"Error: Twitter API authentication failed") 
         return oauth
 
     def connect_db(self):
@@ -86,8 +78,8 @@ class Crawler(object):
 if __name__ == "__main__":
     args = docopt(__doc__, version='Twitter Crawler Version:1.0')
     client = Crawler(args)
-    client.connect_db()
     oauth = client.connect_twitter()
+    db = client.connect_db()
     response = client.twitter_stream(oauth)
 
     for status in response.iter_lines(chunk_size = 10000):
@@ -95,18 +87,17 @@ if __name__ == "__main__":
             try:
                 status = json.loads(status)
                 tweet = Tweet(status)
-                if len(tweet.symbols) > 0:
-                    mydb = client.pool.get_connection()
-                    logging.info(f"Processing Tweet {tweet.tweet_id} created at {tweet.time}")
-                    tweet.save_tweet(mydb)
-                    tweet.save_to_graph(tweet, mydb, client.search_term)
-                    mydb.close()
-                else:
-                    pass
+                logging.info(f"{tweet.text}")
+                mydb = client.pool.get_connection()
+                #logging.info(f"Processing Tweet {tweet.tweet_id} created at {tweet.time}")
+                tweet.save_tweet(mydb)
+                tweet.save_to_graph(tweet, mydb, client.search_term)
+                mydb.close()
             except Exception as error:
                 print(json.dumps(status, indent = 4, sort_keys = True))
                 traceback.print_exc(file = sys.stdout)
                 #break
+        time.sleep(0.1)
 
     client.pool.close()
     logging.info(f"MySQL connection is closed")
