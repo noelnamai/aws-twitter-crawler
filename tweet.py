@@ -36,11 +36,11 @@ class Tweet(object):
         self.symbols = [item["text"].upper() for item in status["entities"]["symbols"]]
         self.retweeted_status = status["retweeted_status"] if "retweeted_status" in status else None
 
-    def clean_tweet(self, tweet): 
+    def clean_tweet(self, tweet):
         #clean tweet text by removing links and special characters
         return " ".join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", "", tweet).split())
 
-    def get_tweet_sentiment(self, tweet): 
+    def get_tweet_sentiment(self, tweet):
         #function to classify sentiment of passed tweet
         blob = TextBlob(tweet)
         return blob.sentiment.polarity, blob.sentiment.subjectivity
@@ -50,13 +50,13 @@ class Tweet(object):
         cursor = mydb.cursor()
         cursor.execute("CREATE DATABASE IF NOT EXISTS twitter")
         cursor.execute("USE twitter")
-        cursor.execute("CREATE TABLE IF NOT EXISTS tweets (tweet_id VARCHAR(255) PRIMARY KEY, created_date DATE, created_time TIME, week_day VARCHAR(255), full_text TEXT, polarity FLOAT, subjectivity INT, symbols VARCHAR(255))")
+        cursor.execute("CREATE TABLE IF NOT EXISTS tweets (tweet_id VARCHAR(255) PRIMARY KEY, created_date DATE, created_time TIME, weekday VARCHAR(255), full_text TEXT, polarity FLOAT, subjectivity INT, symbols VARCHAR(255))")
 
         if self.retweeted_status:
             pass
         else:
             try:
-                sql = "INSERT INTO tweets (tweet_id, created_date, created_time, week_day, full_text, polarity, subjectivity, symbols) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                sql = "INSERT INTO tweets (tweet_id, created_date, created_time, weekday, full_text, polarity, subjectivity, symbols) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                 values = (self.tweet_id, self.date, self.time, self.weekday, self.text, self.polarity, self.subjectivity, ",".join(self.symbols))
                 cursor.execute(sql, values)
             except mysql.Error as error:
@@ -71,7 +71,7 @@ class Tweet(object):
         cursor = mydb.cursor()
         cursor.execute("CREATE DATABASE IF NOT EXISTS twitter")
         cursor.execute("USE twitter")
-        cursor.execute("CREATE TABLE IF NOT EXISTS graph (id INT AUTO_INCREMENT PRIMARY KEY, tweet_id VARCHAR(255), created_date DATE, created_time TIME, week_day VARCHAR(255), source VARCHAR(255), target VARCHAR(255))")
+        cursor.execute("CREATE TABLE IF NOT EXISTS graph (id INT AUTO_INCREMENT PRIMARY KEY, tweet_id VARCHAR(255), created_date DATE, created_time TIME, weekday VARCHAR(255), source VARCHAR(255), target VARCHAR(255))")
 
         if tweet.retweeted_status:
             pass
@@ -81,7 +81,7 @@ class Tweet(object):
                     source = source.upper()
                     target = target.upper()
                     if source != target:
-                        sql = "INSERT INTO graph (tweet_id, created_date, created_time, week_day, source, target) VALUES (%s, %s, %s, %s, %s, %s)"
+                        sql = "INSERT INTO graph (tweet_id, created_date, created_time, weekday, source, target) VALUES (%s, %s, %s, %s, %s, %s)"
                         values = (self.tweet_id, self.date, self.time, self.weekday, source, target)
                         cursor.execute(sql, values)
         cursor.close()
