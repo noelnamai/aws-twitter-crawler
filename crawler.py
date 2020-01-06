@@ -44,8 +44,8 @@ class Crawler(object):
                         resource_owner_secret = credentials.access_token_secret
                         )
             logging.info(f"Connected to Twitter API")
-        except: 
-            logging.info(f"Error: Twitter API authentication failed") 
+        except:
+            logging.info(f"Error: Twitter API authentication failed")
         return oauth
 
     def connect_db(self):
@@ -88,7 +88,9 @@ if __name__ == "__main__":
             try:
                 status = json.loads(status)
                 tweet = Tweet(status)
-                if tweet.language == "en":
+                if tweet.retweeted_status:
+                    pass
+                else:
                     logging.info(f"{tweet.text}")
                     mydb = client.pool.get_connection()
                     tweet.save_tweet(mydb)

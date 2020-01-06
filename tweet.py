@@ -52,18 +52,15 @@ class Tweet(object):
         cursor.execute("USE twitter")
         cursor.execute("CREATE TABLE IF NOT EXISTS tweets (tweet_id VARCHAR(255) PRIMARY KEY, created_date DATE, created_time TIME, weekday VARCHAR(255), full_text TEXT, polarity FLOAT, subjectivity INT, symbols VARCHAR(255))")
 
-        if self.retweeted_status:
-            pass
-        else:
-            try:
-                sql = "INSERT INTO tweets (tweet_id, created_date, created_time, weekday, full_text, polarity, subjectivity, symbols) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-                values = (self.tweet_id, self.date, self.time, self.weekday, self.text, self.polarity, self.subjectivity, ",".join(self.symbols))
-                cursor.execute(sql, values)
-            except mysql.Error as error:
-                if error.errno == mysql.errorcode.ER_DUP_ENTRY:
-                    logging.info(error)
-                else:
-                    raise
+        try:
+            sql = "INSERT INTO tweets (tweet_id, created_date, created_time, weekday, full_text, polarity, subjectivity, symbols) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            values = (self.tweet_id, self.date, self.time, self.weekday, self.text, self.polarity, self.subjectivity, ",".join(self.symbols))
+            cursor.execute(sql, values)
+        except mysql.Error as error:
+            if error.errno == mysql.errorcode.ER_DUP_ENTRY:
+                logging.info(error)
+            else:
+                raise
         cursor.close()
 
     def save_to_graph(self, tweet, mydb, search_term):
@@ -73,15 +70,18 @@ class Tweet(object):
         cursor.execute("USE twitter")
         cursor.execute("CREATE TABLE IF NOT EXISTS graph (id INT AUTO_INCREMENT PRIMARY KEY, tweet_id VARCHAR(255), created_date DATE, created_time TIME, weekday VARCHAR(255), source VARCHAR(255), target VARCHAR(255))")
 
-        if tweet.retweeted_status:
-            pass
-        else:
-            for source in tweet.symbols:
-                for target in tweet.symbols:
-                    source = source.upper()
-                    target = target.upper()
-                    if source != target:
+        for source in tweet.symbols:
+            for target in tweet.symbols:
+                source = source.upper()
+                target = target.upper()
+                if source != target:
+                    try:
                         sql = "INSERT INTO graph (tweet_id, created_date, created_time, weekday, source, target) VALUES (%s, %s, %s, %s, %s, %s)"
                         values = (self.tweet_id, self.date, self.time, self.weekday, source, target)
                         cursor.execute(sql, values)
+                    except:
+                        if error.errno == mysql.errorcode.ER_DUP_ENTRY:
+                            logging.info(error)
+                        else:
+                            raise
         cursor.close()
