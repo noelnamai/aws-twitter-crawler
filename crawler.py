@@ -12,7 +12,7 @@ Options:
     --search-term=STRING        The term to search Twitter API by.
 """
 
-import sys, json, time, logging, twitter, requests, traceback, credentials, mysql.connector, requests_oauthlib
+import sys, json, time, coloredlogs, logging, twitter, requests, traceback, credentials, mysql.connector, requests_oauthlib
 
 from tweet import Tweet
 from docopt import docopt
@@ -24,11 +24,27 @@ class Crawler(object):
     #class attributes
     date, pool, search_term, credentials = None, None, None, None
 
-    logging.basicConfig(
-        level = logging.INFO,
+    logger = logging.getLogger(__name__)
+
+    coloredlogs.DEFAULT_FIELD_STYLES = {
+        "asctime": {"color": "green"},
+        "hostname": {"color": "magenta"},
+        "levelname": {"color": "blue", "bold": True},
+        "name": {"color": "blue"},
+        "programname": {"color": "cyan"}
+    }
+
+    coloredlogs.DEFAULT_LEVEL_STYLES = {
+        "info": {"color": "white"},
+        "warning": {"color": "yellow"},
+        "success": {"color": "green"},
+        "error": {"color": "red"}
+    }
+
+    coloredlogs.install(
         datefmt = "%Y-%m-%d %H:%M:%S",
-        format = "%(asctime)s %(levelname)s: %(message)s"
-        )
+        fmt = "%(asctime)s %(levelname)s: %(message)s"
+    )
 
     def __init__(self, args):
         self.date = str(date.today())
@@ -38,42 +54,42 @@ class Crawler(object):
         #loginto the twitter API and return the api object
         try:
             oauth = requests_oauthlib.OAuth1(
-                        client_key = credentials.api_key,
-                        client_secret = credentials.api_secret_key,
-                        resource_owner_key = credentials.access_token_key,
-                        resource_owner_secret = credentials.access_token_secret
-                        )
-            logging.info(f"Connected to Twitter API")
+                client_key = credentials.api_key,
+                client_secret = credentials.api_secret_key,
+                resource_owner_key = credentials.access_token_key,
+                resource_owner_secret = credentials.access_token_secret
+            )
+            self.logger.info(f"Connected to Twitter API")
         except:
-            logging.info(f"Error: Twitter API authentication failed")
+            self.logger.error(f"Error: Twitter API authentication failed")
         return oauth
 
     def connect_db(self):
         #connect to db
         try:
             self.pool = pooling.MySQLConnectionPool(
-                            pool_name = "pool",
-                            pool_size = 30,
-                            autocommit = True,
-                            buffered = True,
-                            host = credentials.host,
-                            user = credentials.user,
-                            passwd = credentials.passwd
-                            )
+                pool_name = "pool",
+                pool_size = 30,
+                autocommit = True,
+                buffered = True,
+                host = credentials.host,
+                user = credentials.user,
+                passwd = credentials.passwd
+            )
             db = self.pool.get_connection()
-            logging.info(f"Connected to MySQL Server {db.get_server_info()} at {db.server_host}:{db.server_port}")
+            self.logger.info(f"Connected to MySQL Server {db.get_server_info()} at {db.server_host}:{db.server_port}")
         except mysql.connector.Error as error:
-            logging.info(error)
+            self.logger.error(error)
 
     def twitter_stream(self, oauth):
         #get twitter stream with search term(s)
         response = requests.post(
-                        stream = True,
-                        auth = oauth,
-                        timeout = 60,
-                        url = "https://stream.twitter.com/1.1/statuses/filter.json",
-                        data = {"track": self.search_term}
-                        )
+            stream = True,
+            auth = oauth,
+            timeout = 60,
+            url = "https://stream.twitter.com/1.1/statuses/filter.json",
+            data = {"track": self.search_term}
+        )
         return response
 
 if __name__ == "__main__":
@@ -88,19 +104,22 @@ if __name__ == "__main__":
             try:
                 status = json.loads(status)
                 tweet = Tweet(status)
-                if tweet.retweeted_status:
+                if tweet.retweeted_status or tweet.text == "":
                     pass
                 else:
-                    logging.info(f"{tweet.text}")
+                    client.logger.info(f"{tweet.text}")
                     mydb = client.pool.get_connection()
                     tweet.save_tweet(mydb)
                     tweet.save_to_graph(tweet, mydb, client.search_term)
                     mydb.close()
             except Exception as error:
-                print(json.dumps(status, indent = 4, sort_keys = True))
-                traceback.print_exc(file = sys.stdout)
+                if status["limit"]:
+                    client.logger.warning(f"{status['limit']['track']}")
+                else:
+                    print(json.dumps(status, indent = 4, sort_keys = True))
+                    traceback.print_exc(file = sys.stdout)
                 #break
         #time.sleep(0.1)
 
     client.pool.close()
-    logging.info(f"MySQL connection is closed")
+    client.logger.info(f"MySQL connection is closed")

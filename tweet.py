@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import re, calendar, logging, mysql.connector as mysql
+import re, calendar, coloredlogs, logging, mysql.connector as mysql
 
 from os import path
 from textblob import TextBlob
@@ -14,11 +14,26 @@ class Tweet(object):
     symbols = list()
     date, time, text, weekday, user_id, user_name, user_location, tweet_id, retweeted_status, language, polarity, subjectivity = None, None, None, None, None, None, None, None, None, None, None, None
 
-    logging.basicConfig(
-        level = logging.INFO,
+    logger = logging.getLogger(__name__)
+
+    coloredlogs.DEFAULT_FIELD_STYLES = {
+        "name"     : {"color": "blue"},
+        "asctime"  : {"color": "green"},
+        "hostname" : {"color": "magenta"},
+        "levelname": {"color": "blue", "bold": True}
+    }
+
+    coloredlogs.DEFAULT_LEVEL_STYLES = {
+        "error"  : {"color": "red"},
+        "info"   : {"color": "white"},
+        "success": {"color": "green"},
+        "warning": {"color": "yellow"}
+    }
+
+    coloredlogs.install(
         datefmt = "%Y-%m-%d %H:%M:%S",
-        format = "%(asctime)s %(levelname)s: %(message)s"
-        )
+        fmt = "%(asctime)s %(levelname)s: %(message)s"
+    )
 
     def __init__(self, status):
         created_at = datetime.strptime(status["created_at"], "%a %b %d %H:%M:%S %z %Y")
@@ -58,7 +73,7 @@ class Tweet(object):
             cursor.execute(sql, values)
         except mysql.Error as error:
             if error.errno == mysql.errorcode.ER_DUP_ENTRY:
-                logging.info(error)
+                self.logger.error(error)
             else:
                 raise
         cursor.close()
@@ -81,7 +96,7 @@ class Tweet(object):
                         cursor.execute(sql, values)
                     except:
                         if error.errno == mysql.errorcode.ER_DUP_ENTRY:
-                            logging.info(error)
+                            self.logger.error(error)
                         else:
                             raise
         cursor.close()
