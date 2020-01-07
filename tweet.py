@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import re, calendar, coloredlogs, logging, mysql.connector as mysql
+import re, calendar, util, mysql.connector as mysql
 
 from os import path
 from textblob import TextBlob
@@ -13,21 +13,6 @@ class Tweet(object):
     #class attributes
     symbols = list()
     date, time, text, weekday, user_id, user_name, user_location, tweet_id, retweeted_status, language, polarity, subjectivity = None, None, None, None, None, None, None, None, None, None, None, None
-
-    logger = logging.getLogger(__name__)
-    
-    coloredlogs.DEFAULT_LEVEL_STYLES = {
-        "info": {"color": "white"}, "warning": {"color": "yellow"}, "success": {"color": "green"}, "error": {"color": "red"}
-    }
-
-    coloredlogs.DEFAULT_FIELD_STYLES = {
-        "asctime": {"color": "green"}, "hostname": {"color": "magenta"}, "levelname": {"color": "blue", "bold": True}, "name": {"color": "blue"}
-    }
-
-    coloredlogs.install(
-        datefmt = "%Y-%m-%d %H:%M:%S",
-        fmt = "%(asctime)s %(levelname)s: %(message)s"
-    )
 
     def __init__(self, status):
         created_at = datetime.strptime(status["created_at"], "%a %b %d %H:%M:%S %z %Y")
@@ -67,7 +52,7 @@ class Tweet(object):
             cursor.execute(sql, values)
         except mysql.Error as error:
             if error.errno == mysql.errorcode.ER_DUP_ENTRY:
-                self.logger.error(error)
+                util.logger.error(error)
             else:
                 raise
         cursor.close()
@@ -90,7 +75,7 @@ class Tweet(object):
                         cursor.execute(sql, values)
                     except mysql.Error as error:
                         if error.errno == mysql.errorcode.ER_DUP_ENTRY:
-                            self.logger.error(error)
+                            util.logger.error(error)
                         else:
                             raise
         cursor.close()
