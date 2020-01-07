@@ -15,19 +15,13 @@ class Tweet(object):
     date, time, text, weekday, user_id, user_name, user_location, tweet_id, retweeted_status, language, polarity, subjectivity = None, None, None, None, None, None, None, None, None, None, None, None
 
     logger = logging.getLogger(__name__)
-
-    coloredlogs.DEFAULT_FIELD_STYLES = {
-        "name"     : {"color": "blue"},
-        "asctime"  : {"color": "green"},
-        "hostname" : {"color": "magenta"},
-        "levelname": {"color": "blue", "bold": True}
+    
+    coloredlogs.DEFAULT_LEVEL_STYLES = {
+        "info": {"color": "white"}, "warning": {"color": "yellow"}, "success": {"color": "green"}, "error": {"color": "red"}
     }
 
-    coloredlogs.DEFAULT_LEVEL_STYLES = {
-        "error"  : {"color": "red"},
-        "info"   : {"color": "white"},
-        "success": {"color": "green"},
-        "warning": {"color": "yellow"}
+    coloredlogs.DEFAULT_FIELD_STYLES = {
+        "asctime": {"color": "green"}, "hostname": {"color": "magenta"}, "levelname": {"color": "blue", "bold": True}, "name": {"color": "blue"}
     }
 
     coloredlogs.install(
@@ -94,7 +88,7 @@ class Tweet(object):
                         sql = "INSERT INTO graph (tweet_id, created_date, created_time, weekday, source, target) VALUES (%s, %s, %s, %s, %s, %s)"
                         values = (self.tweet_id, self.date, self.time, self.weekday, source, target)
                         cursor.execute(sql, values)
-                    except:
+                    except mysql.Error as error:
                         if error.errno == mysql.errorcode.ER_DUP_ENTRY:
                             self.logger.error(error)
                         else:

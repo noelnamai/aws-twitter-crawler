@@ -26,19 +26,12 @@ class Crawler(object):
 
     logger = logging.getLogger(__name__)
 
-    coloredlogs.DEFAULT_FIELD_STYLES = {
-        "asctime": {"color": "green"},
-        "hostname": {"color": "magenta"},
-        "levelname": {"color": "blue", "bold": True},
-        "name": {"color": "blue"},
-        "programname": {"color": "cyan"}
+    coloredlogs.DEFAULT_LEVEL_STYLES = {
+        "info": {"color": "white"}, "warning": {"color": "yellow"}, "success": {"color": "green"}, "error": {"color": "red"}
     }
 
-    coloredlogs.DEFAULT_LEVEL_STYLES = {
-        "info": {"color": "white"},
-        "warning": {"color": "yellow"},
-        "success": {"color": "green"},
-        "error": {"color": "red"}
+    coloredlogs.DEFAULT_FIELD_STYLES = {
+        "asctime": {"color": "green"}, "hostname": {"color": "magenta"}, "levelname": {"color": "blue", "bold": True}, "name": {"color": "blue"}
     }
 
     coloredlogs.install(
@@ -57,11 +50,11 @@ class Crawler(object):
                 client_key = credentials.api_key,
                 client_secret = credentials.api_secret_key,
                 resource_owner_key = credentials.access_token_key,
-                resource_owner_secret = credentials.access_token_secret
+                resource_owner_secret = credentials.access_token_secretx
             )
             self.logger.info(f"Connected to Twitter API")
         except:
-            self.logger.error(f"Error: Twitter API authentication failed")
+            self.logger.error(f"Twitter API authentication failed")
         return oauth
 
     def connect_db(self):
