@@ -12,25 +12,32 @@ Options:
     --search-term=STRING        The term to search Twitter API by.
 """
 
-import sys, json, time, requests, traceback, credentials, mysql.connector, requests_oauthlib, tweet as twtr
-
-import tweet
+import sys
+import json
+import time
 import util
+import requests
+import traceback
+import credentials
+import tweet as twtr
+import mysql.connector
+import requests_oauthlib
+
 from docopt import docopt
 from datetime import date
 from mysql.connector import pooling
 
 class Crawler(object):
 
-    #class attributes
-    date, pool, search_term, credentials = None, None, None, None
-
     def __init__(self, args):
-        self.date = str(date.today())
+        self.pool        = None
+        self.date        = str(date.today())
         self.search_term = args["--search-term"]
 
     def connect_twitter(self):
-        #loginto the twitter API and return the api object
+        """
+        loginto the twitter API and return the api object
+        """
         try:
             oauth = requests_oauthlib.OAuth1(
                 client_key = credentials.api_key,
@@ -44,7 +51,9 @@ class Crawler(object):
         return oauth
 
     def connect_db(self):
-        #connect to db
+        """
+        connect to db
+        """
         try:
             self.pool = pooling.MySQLConnectionPool(
                 pool_name = "pool",
@@ -61,7 +70,9 @@ class Crawler(object):
             util.logger.error(error)
 
     def twitter_stream(self, oauth):
-        #get twitter stream with search term(s)
+        """
+        get twitter stream with search term(s)
+        """
         response = requests.post(
             stream = True,
             auth = oauth,
@@ -69,6 +80,7 @@ class Crawler(object):
             url = "https://stream.twitter.com/1.1/statuses/filter.json",
             data = {"track": self.search_term}
         )
+
         return response
 
 if __name__ == "__main__":
@@ -100,5 +112,5 @@ if __name__ == "__main__":
         #break
         #time.sleep(0.1)
 
-    #client.pool.close()
+    client.pool.close()
     util.logger.info(f"MySQL connection is closed")
