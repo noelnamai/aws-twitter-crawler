@@ -1,10 +1,10 @@
 # twitter-crawler
 
-## How to query Twitter and save the tweets in MySQL database.
+## How to query Twitter and save the tweets in a MySQL database
 
 Clone the repository:
 
-```Shell
+```
 $ git clone https://github.com/noelnamai/twitter-crawler.git
 ```
 
@@ -14,19 +14,19 @@ To use the python script, you must have **Python >= 3.5** and **MySQL** installe
 
 Install all the packages from the ***requirements.txt***:
 
-```Shell
+```
 $ python pip -r requirements.txt
 ```
 
 Get help:
 
-```Shell
+```
 $ python crawler.py --help
 ```
 
 Run the ***crawler.py*** script:
 
-```Shell
+```
 $ python crawler.py --search-term covid-19
 
 2020-04-20 22:21:30 INFO: Connected to Twitter API
