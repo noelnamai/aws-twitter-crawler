@@ -36,7 +36,9 @@ class Tweet(object):
         """
         clean tweet text by removing links and special characters
         """
-        return " ".join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", "", tweet).split())
+        cleaned_tweet = " ".join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", "", tweet).split())
+
+        return cleaned_tweet
 
     def get_tweet_sentiment(self, tweet):
         """
@@ -54,20 +56,27 @@ class Tweet(object):
         """
         cursor = mydb.cursor()
         cursor.execute("CREATE DATABASE IF NOT EXISTS twitter")
-        cursor.execute("USE twitter")
         cursor.execute(
             """
-            CREATE TABLE IF NOT EXISTS tweets (
-                tweet_id        VARCHAR(255) PRIMARY KEY, 
+            USE twitter
+            """
+        )
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS tweets
+            (
+                tweet_id        VARCHAR(255), 
                 created_date    DATE, 
                 created_time    TIME, 
                 weekday         VARCHAR(255), 
                 full_text       TEXT, 
                 polarity        FLOAT, 
                 subjectivity    INT, 
-                symbols         VARCHAR(255))
+                symbols         VARCHAR(255),
+                PRIMARY KEY(tweet_id)
+            );
             """
-            )
+        )
 
         try:
             sql = "INSERT INTO tweets (tweet_id, created_date, created_time, weekday, full_text, polarity, subjectivity, symbols) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
@@ -78,6 +87,7 @@ class Tweet(object):
                 util.logger.error(error)
             else:
                 raise
+
         cursor.close()
 
     def save_to_graph(self, tweet, mydb, search_term):
@@ -86,19 +96,26 @@ class Tweet(object):
         """
         cursor = mydb.cursor()
         cursor.execute("CREATE DATABASE IF NOT EXISTS twitter")
-        cursor.execute("USE twitter")
         cursor.execute(
             """
-            CREATE TABLE IF NOT EXISTS graph (
-                id              INT AUTO_INCREMENT PRIMARY KEY, 
+            USE twitter
+            """
+        )
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS graph
+            (
+                id              INT AUTO_INCREMENT, 
                 tweet_id        VARCHAR(255), 
                 created_date    DATE, 
                 created_time    TIME, 
                 weekday         VARCHAR(255), 
                 source          VARCHAR(255), 
-                target          VARCHAR(255))
+                target          VARCHAR(255),
+                PRIMARY KEY(id)
+            );
             """
-            )
+        )
 
         for source in tweet.symbols:
             for target in tweet.symbols:
@@ -114,4 +131,5 @@ class Tweet(object):
                             util.logger.error(error)
                         else:
                             raise
+
         cursor.close()

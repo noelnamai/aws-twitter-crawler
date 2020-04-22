@@ -7,15 +7,16 @@ Usage:
     crawler.py (-v | --version)
 
 Options:
-    -h --help                   Show this screen and exit.
-    -v --version                Show version and exit.
-    --search-term=STRING        The term to search Twitter API by.
+    -h --help               Show this screen and exit.
+    -v --version            Show version and exit.
+    --search-term=STRING    The term to search Twitter API.
 """
 
 import sys
 import json
 import time
 import util
+import warnings
 import requests
 import traceback
 import credentials
@@ -26,6 +27,12 @@ import requests_oauthlib
 from docopt import docopt
 from datetime import date
 from mysql.connector import pooling
+
+if sys.version_info < (3, 7):
+    raise Exception("Requires atleast Python 3.7.x")
+
+warnings.filterwarnings("ignore", category = FutureWarning)
+warnings.filterwarnings("ignore", category = DeprecationWarning)
 
 class Crawler(object):
 
