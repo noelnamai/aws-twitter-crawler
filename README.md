@@ -4,29 +4,29 @@
 
 Clone the repository:
 
-```bash
+```Shell
 $ git clone https://github.com/noelnamai/twitter-crawler.git
 ```
 
-You must have `MySQL` installed and have the server running.
+You must have **MySQL** installed and have the server running.
 
-To use the python script, you must have `Python >= 3.5` and `MySQL` installed and have the server running.
+To use the python script, you must have **Python >= 3.5** and **MySQL** installed and have the server running.
 
-Install all the packages from the `requirements.txt`:
+Install all the packages from the ***requirements.txt***:
 
-```bash
+```Shell
 $ python pip -r requirements.txt
 ```
 
 Get help:
 
-```bash
+```Shell
 $ python crawler.py --help
 ```
 
-Run the `crawler.py` script:
+Run the ***crawler.py*** script:
 
-```bash
+```Shell
 $ python crawler.py --search-term covid-19
 
 2020-04-20 22:21:30 INFO: Connected to Twitter API
