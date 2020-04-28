@@ -101,7 +101,7 @@ if __name__ == "__main__":
         if status:
             try:
                 status = json.loads(status)
-                tweet = twtr.Tweet(status)
+                tweet  = twtr.Tweet(status)
                 if tweet.retweeted_status or tweet.text == "":
                     pass
                 else:
