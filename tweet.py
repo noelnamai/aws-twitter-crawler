@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
-import re
-import util
 import calendar
-import mysql.connector as mysql
-
-from os import path
-from textblob import TextBlob
+import re
 from datetime import datetime
+from os import path
+
+import mysql.connector as mysql
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from textblob import TextBlob
+
+import util
 
 class Tweet(object):
 
@@ -36,9 +37,9 @@ class Tweet(object):
         """
         clean tweet text by removing links and special characters
         """
-        cleaned_tweet = " ".join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", "", tweet).split())
+        clean_tweet = " ".join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", "", tweet).split())
 
-        return cleaned_tweet
+        return clean_tweet
 
     def get_tweet_sentiment(self, tweet):
         """

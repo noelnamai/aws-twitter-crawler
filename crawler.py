@@ -2,31 +2,34 @@
 
 """
 Usage:
-    crawler.py --search-term <STRING>
+    crawler.py --search-term <SEARCH> --sqs-queue-url <QUEUE>
     crawler.py (-h | --help)
     crawler.py (-v | --version)
 
 Options:
     -h --help               Show this screen and exit.
     -v --version            Show version and exit.
-    --search-term=STRING    The term to search Twitter API.
+    --search-term=SEARCH    The term to search Twitter API.
+    --sqs-queue-url=QUEUE   The Amazon SQS URL where messages will be sent.
 """
 
-import sys
 import json
+import sys
 import time
-import util
-import warnings
-import requests
 import traceback
+import warnings
+from datetime import date
+
+import jsonpickle
+import mysql.connector
+import requests
+import requests_oauthlib
+from docopt import docopt
+from mysql.connector import pooling
+
 import credentials
 import tweet as twtr
-import mysql.connector
-import requests_oauthlib
-
-from docopt import docopt
-from datetime import date
-from mysql.connector import pooling
+import util
 
 if sys.version_info < (3, 7):
     raise Exception("Requires atleast Python 3.7.x")
@@ -40,10 +43,11 @@ class Crawler(object):
         self.pool        = None
         self.date        = str(date.today())
         self.search_term = args["--search-term"]
+        self.sqs_url     = args["--sqs-queue-url"]
 
     def connect_twitter(self):
         """
-        loginto the twitter API and return the api object
+        log into the twitter API and return the api object
         """
         try:
             oauth = requests_oauthlib.OAuth1(
@@ -85,7 +89,10 @@ class Crawler(object):
             auth = oauth,
             timeout = 60,
             url = "https://stream.twitter.com/1.1/statuses/filter.json",
-            data = {"track": self.search_term}
+            data = {
+                "track": self.search_term, 
+                "language": "en"
+            }
         )
 
         return response
@@ -105,6 +112,8 @@ if __name__ == "__main__":
                 if tweet.retweeted_status or tweet.text == "":
                     pass
                 else:
+                    frozen = jsonpickle.encode(tweet.__dict__)
+                    thawed = jsonpickle.decode(frozen)
                     util.logger.info(f"{tweet.text}")
                     mydb = client.pool.get_connection()
                     tweet.save_tweet(mydb)
